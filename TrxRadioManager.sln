@@ -2,6 +2,16 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{692927EE-813B-424E-80F9-8A36E74FE2B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{7AE4EB64-9DD1-463D-A77D-23DD8BB43BFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Drivers", "Drivers", "{16B18A1D-E4A0-48B3-8BD0-C916F38E63AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FT847Driver", "Drivers\FT847Driver\FT847Driver.csproj", "{5B08A197-95C6-4F4F-B1F8-9B66ED771478}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{C9929C86-50BD-4999-86C2-0840DEAA7402}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +22,20 @@ Global
 		{692927EE-813B-424E-80F9-8A36E74FE2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{692927EE-813B-424E-80F9-8A36E74FE2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{692927EE-813B-424E-80F9-8A36E74FE2B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AE4EB64-9DD1-463D-A77D-23DD8BB43BFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AE4EB64-9DD1-463D-A77D-23DD8BB43BFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AE4EB64-9DD1-463D-A77D-23DD8BB43BFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AE4EB64-9DD1-463D-A77D-23DD8BB43BFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B08A197-95C6-4F4F-B1F8-9B66ED771478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B08A197-95C6-4F4F-B1F8-9B66ED771478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B08A197-95C6-4F4F-B1F8-9B66ED771478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B08A197-95C6-4F4F-B1F8-9B66ED771478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B08A197-95C6-4F4F-B1F8-9B66ED771478} = {16B18A1D-E4A0-48B3-8BD0-C916F38E63AB}
 	EndGlobalSection
 EndGlobal
