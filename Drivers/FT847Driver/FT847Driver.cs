@@ -64,34 +64,14 @@ public class FT847Driver : RigDriverBase
     {
         try
         {
-            string command = $"FA{frequency:00000000000};"; // FA command sets the frequency
-            _serialPort.WriteLine(command);
+            byte[] commandBlock = BuildFrequencyCommand(frequency);
+            SendCommand(commandBlock);
             return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error setting frequency on Yaesu FT-847: {ex.Message}");
             return false;
-        }
-    }
-
-    public override double GetFrequency()
-    {
-        try
-        {
-            _serialPort.WriteLine("FA;"); // FA command queries the frequency
-            string response = _serialPort.ReadLine();
-            if (response.StartsWith("FA") && double.TryParse(response.Substring(2), out double frequency))
-            {
-                return frequency;
-            }
-
-            return 0.0;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting frequency from Yaesu FT-847: {ex.Message}");
-            return 0.0;
         }
     }
 
@@ -156,9 +136,8 @@ public class FT847Driver : RigDriverBase
                 throw new InvalidOperationException("Device not initialized.");
 
             byte command = enabled ? (byte)0x08 : (byte)0x88; // 0x08 to enable PTT, 0x88 to disable
-            _serialPort.Write();
-            string command = enabled ? "TX1;" : "TX0;"; // TX command controls PTT
-            _serialPort.WriteLine(command);
+            byte[] commandBlock = new byte[] { 0, 0, 0, 0, command };
+            SendCommand(commandBlock);
             return true;
         }
         catch (Exception ex)
@@ -202,24 +181,58 @@ public class FT847Driver : RigDriverBase
             return 0.0;
         }
     }
-    
-    private byte[] ConvertFrequencyToBcd(long frequency)
+
+    private byte[] BuildFrequencyCommand(double frequency)
     {
-        string freqString = frequency.ToString().PadLeft(10, '0'); // 10-digit BCD format
-        byte[] bcd = new byte[5];
-        for (int i = 0; i < 5; i++)
+        // Create a 5-byte command block
+        byte[] commandBlock = new byte[5];
+        commandBlock = ConvertFrequencyToBcd(frequency);
+
+        // Set the opcode for frequency setting (example opcode, replace with actual value)
+        commandBlock[4] = 0x01; // Example opcode for setting frequency
+
+        return commandBlock;
+    }
+
+    private bool SendCommand(byte[] commandBlock)
+    {
+        try
         {
-            bcd[i] = (byte)((freqString[2 * i] - '0') << 4 | (freqString[2 * i + 1] - '0'));
+            if (commandBlock.Length != 5)
+            {
+                throw new ArgumentException("Invalid command block. Must be exactly five bytes!", nameof(commandBlock));
+            }
+
+            _serialPort.Write(commandBlock, 0, 5);
+            return true;
         }
-        
-        return bcd;
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return false;
+        }
     }
     
-    private byte[] ConvertFrequencyToBcd(double frequency)
+    private double GetFrequency(VFOType vfoType = VFOType.Main)
     {
-        // Convert the frequency to Hz (integer representation)
-        long frequencyInHz = (long)(frequency * 1000000);
-        return ConvertFrequencyToBcd(frequencyInHz);
+        try
+        {
+            byte[] commandBlock = new byte[] { 0, 0, 0, 0, (byte)vfoType };
+            if (SendCommand(commandBlock) == false)
+                return -1.0;
+            
+            string response = _serialPort.ReadLine();
+            if (response.StartsWith("FA") && double.TryParse(response.Substring(2), out double frequency))
+            {
+                return frequency;
+            }
+
+            return 0.0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting frequency from Yaesu FT-847: {ex.Message}");
+            return 0.0;
+        }
     }
-    
 }
