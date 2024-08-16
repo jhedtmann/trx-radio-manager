@@ -11,6 +11,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{EE7E2C67-FB33-41AF-980A-F4BD5B2C0CA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{C9929C86-50BD-4999-86C2-0840DEAA7402}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\ft847um.pdf = Documentation\ft847um.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
