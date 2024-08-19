@@ -1,4 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
 using Interface;
 
 namespace API;
@@ -15,34 +20,10 @@ public class RigDriverManager
         string driverPath = Path.Combine(path, "API/build/Drivers");
         LoadDrivers(driverPath);
     }
-
-    public void LoadDrivers(string path)
+    
+    public IEnumerable<string> GetDriverNames()
     {
-        string[] driverFiles = Directory.GetFiles(path, "*.dll");
-
-        foreach (string file in driverFiles)
-        {
-            Assembly assembly = Assembly.LoadFrom(file);
-            IEnumerable<Type> driverTypes =
-                assembly.GetTypes().Where(t => 
-                    typeof(IRigDriver).IsAssignableFrom(t) && 
-                    !t.IsInterface && 
-                    t.BaseType != null &&
-                    t.BaseType.IsAbstract);
-
-            foreach (Type type in driverTypes)
-            {
-                try
-                {
-                    IRigDriver driverInstance = (IRigDriver)Activator.CreateInstance(type)!;
-                    _drivers[driverInstance.Name] = type;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-        }
+        return _drivers.Keys.ToList();
     }
 
     public bool SelectDriver(string driverName)
@@ -83,5 +64,34 @@ public class RigDriverManager
             directory = directory.Parent;
         }
         return directory;
+    }
+
+    private void LoadDrivers(string path)
+    {
+        string[] driverFiles = Directory.GetFiles(path, "*.dll");
+
+        foreach (string file in driverFiles)
+        {
+            Assembly assembly = Assembly.LoadFrom(file);
+            IEnumerable<Type> driverTypes =
+                assembly.GetTypes().Where(t => 
+                    typeof(IRigDriver).IsAssignableFrom(t) && 
+                    !t.IsInterface && 
+                    t.BaseType != null &&
+                    t.BaseType.IsAbstract);
+
+            foreach (Type type in driverTypes)
+            {
+                try
+                {
+                    IRigDriver driverInstance = (IRigDriver)Activator.CreateInstance(type)!;
+                    _drivers[driverInstance.Name] = type;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
     }
 }

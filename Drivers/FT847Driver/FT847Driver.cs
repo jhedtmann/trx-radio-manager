@@ -1,3 +1,4 @@
+using System;
 using System.IO.Ports;
 using Interface;
 
@@ -5,7 +6,7 @@ namespace FT847Driver;
 
 public class FT847Driver : RigDriverBase
 {
-    private SerialPort _serialPort;
+    private SerialPort? _serialPort;
 
     public FT847Driver() : base("Yaesu FT-847")
     {
@@ -92,7 +93,7 @@ public class FT847Driver : RigDriverBase
                 _ => throw new ArgumentException("Invalid mode")
             };
 
-            _serialPort.WriteLine(command);
+            _serialPort?.WriteLine(command);
             return true;
         }
         catch (Exception ex)
@@ -106,8 +107,8 @@ public class FT847Driver : RigDriverBase
     {
         try
         {
-            _serialPort.WriteLine("MD;"); // MD command queries the mode
-            string response = _serialPort.ReadLine();
+            _serialPort?.WriteLine("MD;"); // MD command queries the mode
+            string response = _serialPort?.ReadLine();
             return response switch
             {
                 "MD1;" => "LSB",
@@ -151,8 +152,8 @@ public class FT847Driver : RigDriverBase
     {
         try
         {
-            _serialPort.WriteLine("TX;"); // TX command queries the PTT state
-            string response = _serialPort.ReadLine();
+            _serialPort?.WriteLine("TX;"); // TX command queries the PTT state
+            string response = _serialPort?.ReadLine();
             return response == "TX1;";
         }
         catch (Exception ex)
@@ -166,8 +167,8 @@ public class FT847Driver : RigDriverBase
     {
         try
         {
-            _serialPort.WriteLine("PC;"); // PC command queries power output
-            string response = _serialPort.ReadLine();
+            _serialPort?.WriteLine("PC;"); // PC command queries power output
+            string response = _serialPort?.ReadLine();
             if (response.StartsWith("PC") && double.TryParse(response.Substring(2), out double power))
             {
                 return power;
@@ -203,7 +204,7 @@ public class FT847Driver : RigDriverBase
                 throw new ArgumentException("Invalid command block. Must be exactly five bytes!", nameof(commandBlock));
             }
 
-            _serialPort.Write(commandBlock, 0, 5);
+            _serialPort?.Write(commandBlock, 0, 5);
             return true;
         }
         catch (Exception ex)
@@ -221,7 +222,7 @@ public class FT847Driver : RigDriverBase
             if (SendCommand(commandBlock) == false)
                 return -1.0;
             
-            string response = _serialPort.ReadLine();
+            string response = _serialPort?.ReadLine();
             if (response.StartsWith("FA") && double.TryParse(response.Substring(2), out double frequency))
             {
                 return frequency;
