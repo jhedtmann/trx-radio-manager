@@ -1,12 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using TrxRadioManager.API.Interfaces;
 
-using Interface;
-
-namespace API;
+namespace TrxRadioManager.API;
 
 public class RigDriverManager
 {
@@ -37,23 +36,9 @@ public class RigDriverManager
 
     public bool InitializeDriver() => _currentDriver?.Initialize() ?? false;
 
-    public bool Connect(string connectionString) => _currentDriver?.Connect(connectionString) ?? false;
+    public bool Connect(string port, int baudRate = 9600) => _currentDriver?.Connect(port, baudRate) ?? false;
 
     public bool Disconnect() => _currentDriver?.Disconnect() ?? false;
-
-    public bool SetFrequency(double frequency) => _currentDriver?.SetFrequency(frequency) ?? false;
-
-    public double GetFrequency() => _currentDriver?.GetFrequency() ?? 0.0;
-
-    public bool SetMode(string mode) => _currentDriver?.SetMode(mode) ?? false;
-
-    public string GetMode() => _currentDriver?.GetMode() ?? "Unknown";
-
-    public bool SetPtt(bool enabled) => _currentDriver?.SetPtt(enabled) ?? false;
-
-    public bool GetPtt() => _currentDriver?.GetPtt() ?? false;
-
-    public double GetPower() => _currentDriver?.GetPower() ?? 0.0;
     
     private static DirectoryInfo TryGetSolutionDirectoryInfo(string? currentPath = null)
     {
@@ -63,6 +48,7 @@ public class RigDriverManager
         {
             directory = directory.Parent;
         }
+        
         return directory;
     }
 

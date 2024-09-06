@@ -1,4 +1,4 @@
-namespace Interface;
+namespace TrxRadioManager.API.Interfaces;
 
 public interface IVFOManagement
 {

@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "TrxRadioManager.API.Interfaces/1.0.0": {
+        "runtime": {
+          "TrxRadioManager.API.Interfaces.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "TrxRadioManager.API.Interfaces/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\API\API.csproj" />
+      <ProjectReference Include="..\Drivers\FT847Driver\FT847Driver.csproj" />
     </ItemGroup>
 
 </Project>

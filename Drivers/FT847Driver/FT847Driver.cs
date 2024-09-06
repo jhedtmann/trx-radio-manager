@@ -1,11 +1,12 @@
 using System;
 using System.IO.Ports;
-using Interface;
+using TrxRadioManager.API.Interfaces;
 
-namespace FT847Driver;
+namespace TrxRadioManager.Drivers.FT847;
 
-public class FT847Driver : RigDriverBase
+public partial class FT847Driver : RigDriverBase
 {
+    private const int COMMAND_LENGTH = 5;
     private SerialPort? _serialPort;
 
     public FT847Driver() : base("Yaesu FT-847")
@@ -16,15 +17,14 @@ public class FT847Driver : RigDriverBase
 
     public override bool Initialize()
     {
-        // Any initialization logic specific to Yaesu FT-847
         return true;
     }
 
-    public override bool Connect(string connectionString)
+    public override bool Connect(string port, int baudRate = 9600)
     {
         try
         {
-            _serialPort = new SerialPort(connectionString, 9600, Parity.None, 8, StopBits.One)
+            _serialPort = new SerialPort(port, baudRate, Parity.None, 7, StopBits.Two)
             {
                 Handshake = Handshake.None,
                 DtrEnable = true,
@@ -60,180 +60,21 @@ public class FT847Driver : RigDriverBase
             return false;
         }
     }
-
-    public override bool SetFrequency(double frequency)
-    {
-        try
-        {
-            byte[] commandBlock = BuildFrequencyCommand(frequency);
-            SendCommand(commandBlock);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error setting frequency on Yaesu FT-847: {ex.Message}");
-            return false;
-        }
-    }
-
-    public override bool SetMode(string mode)
-    {
-        try
-        {
-            string command = mode switch
-            {
-                "LSB" => "MD1;", // MD command sets the mode
-                "USB" => "MD2;",
-                "CW" => "MD3;",
-                "FM" => "MD4;",
-                "AM" => "MD5;",
-                "RTTY" => "MD6;",
-                "CW-R" => "MD7;",
-                "RTTY-R" => "MD9;",
-                _ => throw new ArgumentException("Invalid mode")
-            };
-
-            _serialPort?.WriteLine(command);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error setting mode on Yaesu FT-847: {ex.Message}");
-            return false;
-        }
-    }
-
-    public override string GetMode()
-    {
-        try
-        {
-            _serialPort?.WriteLine("MD;"); // MD command queries the mode
-            string response = _serialPort?.ReadLine();
-            return response switch
-            {
-                "MD1;" => "LSB",
-                "MD2;" => "USB",
-                "MD3;" => "CW",
-                "MD4;" => "FM",
-                "MD5;" => "AM",
-                "MD6;" => "RTTY",
-                "MD7;" => "CW-R",
-                "MD9;" => "RTTY-R",
-                _ => "Unknown"
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting mode from Yaesu FT-847: {ex.Message}");
-            return "Unknown";
-        }
-    }
-
-    public override bool SetPtt(bool enabled)
-    {
-        try
-        {
-            if (_serialPort == null)
-                throw new InvalidOperationException("Device not initialized.");
-
-            byte command = enabled ? (byte)0x08 : (byte)0x88; // 0x08 to enable PTT, 0x88 to disable
-            byte[] commandBlock = new byte[] { 0, 0, 0, 0, command };
-            SendCommand(commandBlock);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error setting PTT on Yaesu FT-847: {ex.Message}");
-            return false;
-        }
-    }
-
-    public override bool GetPtt()
-    {
-        try
-        {
-            _serialPort?.WriteLine("TX;"); // TX command queries the PTT state
-            string response = _serialPort?.ReadLine();
-            return response == "TX1;";
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting PTT state from Yaesu FT-847: {ex.Message}");
-            return false;
-        }
-    }
-
-    public override double GetPower()
-    {
-        try
-        {
-            _serialPort?.WriteLine("PC;"); // PC command queries power output
-            string response = _serialPort?.ReadLine();
-            if (response.StartsWith("PC") && double.TryParse(response.Substring(2), out double power))
-            {
-                return power;
-            }
-
-            return 0.0;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting power from Yaesu FT-847: {ex.Message}");
-            return 0.0;
-        }
-    }
-
-    private byte[] BuildFrequencyCommand(double frequency)
-    {
-        // Create a 5-byte command block
-        byte[] commandBlock = new byte[5];
-        commandBlock = ConvertFrequencyToBcd(frequency);
-
-        // Set the opcode for frequency setting (example opcode, replace with actual value)
-        commandBlock[4] = 0x01; // Example opcode for setting frequency
-
-        return commandBlock;
-    }
-
-    private bool SendCommand(byte[] commandBlock)
-    {
-        try
-        {
-            if (commandBlock.Length != 5)
-            {
-                throw new ArgumentException("Invalid command block. Must be exactly five bytes!", nameof(commandBlock));
-            }
-
-            _serialPort?.Write(commandBlock, 0, 5);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            return false;
-        }
-    }
     
-    private double GetFrequency(VFOType vfoType = VFOType.Main)
-    {
-        try
-        {
-            byte[] commandBlock = new byte[] { 0, 0, 0, 0, (byte)vfoType };
-            if (SendCommand(commandBlock) == false)
-                return -1.0;
-            
-            string response = _serialPort?.ReadLine();
-            if (response.StartsWith("FA") && double.TryParse(response.Substring(2), out double frequency))
-            {
-                return frequency;
-            }
+    #region Private Methods
 
-            return 0.0;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting frequency from Yaesu FT-847: {ex.Message}");
-            return 0.0;
-        }
+    private byte[] SendCommand(byte[] command, bool expectResponse = false)
+    {
+        if (command.Length != COMMAND_LENGTH)
+            throw new ArgumentException("Command length must be exactly 5 bytes!", nameof(command));
+        
+        _serialPort.Write(command, 0, COMMAND_LENGTH);
+        if (expectResponse == false)
+            return [];
+        
+        byte[] response = new byte[COMMAND_LENGTH];
+        _serialPort.Read(response, 0, COMMAND_LENGTH);
+        return response;
     }
+    #endregion
 }

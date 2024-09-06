@@ -1,4 +1,4 @@
-using API;
+using TrxRadioManager.API;
 
 namespace Tests;
 

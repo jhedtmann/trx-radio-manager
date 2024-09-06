@@ -5,6 +5,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+        <AssemblyName>TrxRadioManager.API.Interfaces</AssemblyName>
+        <RootNamespace>TrxRadioManager.API.Interfaces</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
