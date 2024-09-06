@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		Documentation\ft847um.pdf = Documentation\ft847um.pdf
 		Documentation\IC-705_ENG_CI-V_1_20200721.pdf = Documentation\IC-705_ENG_CI-V_1_20200721.pdf
+		Documentation\Interfaces.md = Documentation\Interfaces.md
 	EndProjectSection
 EndProject
 Global
