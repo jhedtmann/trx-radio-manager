@@ -15,14 +15,14 @@ public class RigDriverManager
     public RigDriverManager()
     {
         _drivers = new Dictionary<string, Type>();
-        string path =  TryGetSolutionDirectoryInfo().ToString();
+        string path = TryGetSolutionDirectoryInfo().ToString();
         string driverPath = Path.Combine(path, "API/build/Drivers");
         LoadDrivers(driverPath);
     }
-    
-    public IEnumerable<string> GetDriverNames()
+
+    public IEnumerable<string> DriverNames
     {
-        return _drivers.Keys.ToList();
+        get { return _drivers.Keys; }
     }
 
     public bool SelectDriver(string driverName)
@@ -39,7 +39,7 @@ public class RigDriverManager
     public bool Connect(string port, int baudRate = 9600) => _currentDriver?.Connect(port, baudRate) ?? false;
 
     public bool Disconnect() => _currentDriver?.Disconnect() ?? false;
-    
+
     private static DirectoryInfo TryGetSolutionDirectoryInfo(string? currentPath = null)
     {
         DirectoryInfo? directory = new DirectoryInfo(
@@ -48,7 +48,7 @@ public class RigDriverManager
         {
             directory = directory.Parent;
         }
-        
+
         return directory;
     }
 
@@ -60,9 +60,9 @@ public class RigDriverManager
         {
             Assembly assembly = Assembly.LoadFrom(file);
             IEnumerable<Type> driverTypes =
-                assembly.GetTypes().Where(t => 
-                    typeof(IRigDriver).IsAssignableFrom(t) && 
-                    !t.IsInterface && 
+                assembly.GetTypes().Where(t =>
+                    typeof(IRigDriver).IsAssignableFrom(t) &&
+                    !t.IsInterface &&
                     t.BaseType != null &&
                     t.BaseType.IsAbstract);
 
