@@ -15,4 +15,12 @@ public class FT847DriverTests
         fmc.SetMainVFO(VFOType.Main, 14200000);
         int status = fmc.GetMainVFO(VFOType.Main);
     }
+
+    [Test]
+    public void TestEnumLike_OperatingModes()
+    {
+        OperatingModeType mode = OperatingModeType.CWR;
+        Assert.That(mode.Name, Is.EqualTo("CWR"));
+        Assert.That(mode, Is.EqualTo(OperatingModeType.CWR));
+    }
 }

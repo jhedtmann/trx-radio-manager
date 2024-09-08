@@ -97,10 +97,7 @@
       },
       "TrxRadioManager.API.Interfaces/1.0.0": {
         "runtime": {
-          "TrxRadioManager.API.Interfaces.dll": {
-            "assemblyVersion": "1.0.0",
-            "fileVersion": ""
-          }
+          "TrxRadioManager.API.Interfaces.dll": {}
         }
       },
       "TrxRadioManager.API.Interfaces.Reference/1.0.0.0": {
